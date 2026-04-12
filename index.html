@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Cut the Rope - Níveis</title>
+<style>
+body { font-family: Arial; text-align: center; background:#f2e0c9; }
+h1 { margin-top:20px; }
+.grid { display:grid; grid-template-columns: repeat(5, 100px); gap:15px; justify-content:center; margin-top:30px; }
+a { text-decoration:none; }
+button { padding:15px; font-size:16px; border:none; border-radius:10px; cursor:pointer; width:100%; }
+.locked { background:#999; cursor:not-allowed; }
+.unlocked { background:#4CAF50; color:white; }
+.completed { background:#FFD700; }
+#completeBtn { margin-top:20px; padding:10px 20px; display:none; }
+</style>
+</head>
+<body>
+
+<h1>🍬 Cut the Rope - Mundo 1</h1>
+
+<div class="grid" id="levels"></div>
+
+<button id="completeBtn" onclick="completeLevel()">✔ Terminei o nível</button>
+
+<script>
+const links = [
+"https://play.candies.monster/lTDT",
+"https://play.candies.monster/NHXI",
+"https://play.candies.monster/ePeK",
+"https://play.candies.monster/DzSE",
+"https://play.candies.monster/yxRy",
+"https://play.candies.monster/UxTs",
+"https://play.candies.monster/IjFf",
+"https://play.candies.monster/mmqQ",
+"https://play.candies.monster/tlue",
+"https://play.candies.monster/WBjF",
+"https://play.candies.monster/hniT",
+"https://play.candies.monster/QOLQ",
+"https://play.candies.monster/SfsN",
+"https://play.candies.monster/Rbkz",
+"https://play.candies.monster/dKXr"
+];
+
+let progress = parseInt(localStorage.getItem("levelProgress")) || 1;
+let currentLevel = 0;
+
+const container = document.getElementById("levels");
+
+links.forEach((link, i) => {
+  const wrapper = document.createElement("a");
+  wrapper.href = link;
+  wrapper.target = "_blank";
+
+  const btn = document.createElement("button");
+  btn.innerText = i+1;
+
+  if (i+1 < progress) {
+    btn.className = "completed";
+    btn.onclick = () => showComplete(i);
+  } else if (i+1 === progress) {
+    btn.className = "unlocked";
+    btn.onclick = () => showComplete(i);
+  } else {
+    btn.className = "locked";
+    wrapper.removeAttribute("href");
+  }
+
+  wrapper.appendChild(btn);
+  container.appendChild(wrapper);
+});
+
+function showComplete(i) {
+  currentLevel = i+1;
+  document.getElementById("completeBtn").style.display = "inline-block";
+}
+
+function completeLevel() {
+  if (currentLevel === progress) {
+    progress++;
+    localStorage.setItem("levelProgress", progress);
+    location.reload();
+  }
+}
+</script>
+
+</body>
+</html>
