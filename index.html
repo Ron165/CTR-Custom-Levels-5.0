@@ -2,15 +2,17 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Cut the Rope 4.1</title>
+<title>Cut the Rope 5.0</title>
 <style>
 body { font-family: Arial; text-align: center; background:#f2e0c9; margin:0; }
 .grid { display:grid; grid-template-columns: repeat(5, 80px); gap:10px; justify-content:center; }
-button { padding:10px; border:none; border-radius:10px; cursor:pointer; }
+button { padding:10px; border:none; border-radius:10px; cursor:pointer; transition: transform 0.2s, box-shadow 0.2s; }
+button:hover { transform: scale(1.1); box-shadow:0 4px 10px rgba(0,0,0,0.3); }
 .locked { background:#5dade2; }
 .unlocked { background:#3498db; color:white; }
 .completed { background:#2e86c1; color:white; }
-.box { margin:20px auto; padding:15px; border-radius:15px; width:300px; background:#d9b38c; cursor:pointer; position:relative; }
+.box { margin:20px auto; padding:15px; border-radius:15px; width:300px; background:#d9b38c; cursor:pointer; position:relative; transition: transform 0.2s; }
+.box:hover { transform: scale(1.03); }
 .hidden { display:none; }
 .starBtns { margin:20px auto; display:none; background:#fff; padding:10px; border-radius:10px; width:200px; }
 .levelStars { font-size:12px; display:block; }
@@ -30,7 +32,7 @@ button { padding:10px; border:none; border-radius:10px; cursor:pointer; }
 </head>
 <body>
 
-<h1>🍬 Cut the Rope 4.1</h1>
+<h1>🍬 Cut the Rope 5.0</h1>
 
 <button onclick="showCodeInput()">🔓 Código</button><br>
 <input id="codeInput" placeholder="Código + Enter" onkeydown="checkCode(event)">
@@ -40,6 +42,9 @@ button { padding:10px; border:none; border-radius:10px; cursor:pointer; }
 <div class="box" onclick="toggleS3()"><h3>⚠️ Perigos</h3><div id="stars3"></div><div id="lock3" class="lockOverlay"></div><div class="grid hidden" id="s3" onclick="event.stopPropagation()"></div></div>
 <div class="box" onclick="toggleS4()"><h3>🌌 Gravidade</h3><div id="stars4"></div><div id="lock4" class="lockOverlay"></div><div class="grid hidden" id="s4" onclick="event.stopPropagation()"></div></div>
 <div class="box" onclick="toggleS5()"><h3>☠️ Zona de Risco</h3><div id="stars5"></div><div id="lock5" class="lockOverlay"></div><div class="grid hidden" id="s5" onclick="event.stopPropagation()"></div></div>
+
+<!-- 🆕 CAIXA 6 -->
+<div class="box" onclick="toggleS6()"><h3>🎧 Fase Fantasma</h3><div id="stars6"></div><div id="lock6" class="lockOverlay"></div><div class="grid hidden" id="s6" onclick="event.stopPropagation()"></div></div>
 
 <div class="starBtns" id="starBtns">
 <button onclick="finish(1)">⭐</button>
@@ -56,6 +61,9 @@ const s3=["https://play.candies.monster/vzhJ","https://play.candies.monster/crLu
 const s4=["https://play.candies.monster/MjBA","https://play.candies.monster/oxMQ","https://play.candies.monster/KJXf","https://play.candies.monster/azSz","https://play.candies.monster/LDSu","https://play.candies.monster/WUlG","https://play.candies.monster/qarR","https://play.candies.monster/puVd","https://play.candies.monster/OWQI","https://play.candies.monster/lQzu"];
 const s5=["https://play.candies.monster/LvMb","https://play.candies.monster/jfwi","https://play.candies.monster/AnPf","https://play.candies.monster/uMeP","https://play.candies.monster/SztJ","https://play.candies.monster/fMSX","https://play.candies.monster/wlSF","https://play.candies.monster/MOpo","https://play.candies.monster/uros","https://play.candies.monster/IzjJ","https://play.candies.monster/KMuA","https://play.candies.monster/ZWwI","https://play.candies.monster/SaLm","https://play.candies.monster/khhV","https://play.candies.monster/jzCD"];
 
+// 🆕 CAIXA 6
+const s6=["https://play.candies.monster/AtWJ","https://play.candies.monster/ykvr","https://play.candies.monster/WNHq","https://play.candies.monster/wPBg","https://play.candies.monster/bzXb","https://play.candies.monster/lSap","https://play.candies.monster/DXIi","https://play.candies.monster/Hyia","https://play.candies.monster/QLJo","https://play.candies.monster/wlBP","https://play.candies.monster/nZvA","https://play.candies.monster/dpMi","https://play.candies.monster/yTjv","https://play.candies.monster/izUV","https://play.candies.monster/InJY"];
+
 let progress=parseInt(localStorage.getItem("progress"))||1;
 let stars=JSON.parse(localStorage.getItem("stars"))||{};
 
@@ -63,8 +71,8 @@ function showCodeInput(){codeInput.style.display="inline";}
 
 function checkCode(e){
  if(e.key==="Enter" && e.target.value==="Zeptolab"){
-  progress=200;
-  for(let i=1;i<=60;i++) stars[i]=3;
+  progress=300;
+  for(let i=1;i<=75;i++) stars[i]=3;
   localStorage.setItem("progress",progress);
   localStorage.setItem("stars",JSON.stringify(stars));
   location.reload();
@@ -78,6 +86,7 @@ function toggleS2(){if(totalStars()>=35)toggle('s2');}
 function toggleS3(){if(totalStars()>=70)toggle('s3');}
 function toggleS4(){if(totalStars()>=95)toggle('s4');}
 function toggleS5(){if(totalStars()>=125)toggle('s5');}
+function toggleS6(){if(totalStars()>=170)toggle('s6');}
 
 function create(list,id,offset){
  let c=document.getElementById(id);c.innerHTML="";
@@ -88,8 +97,7 @@ function create(list,id,offset){
   if(lvl<progress)b.className="completed";
   else if(lvl===progress)b.className="unlocked";
   else b.className="locked";
-  b.onclick=(e)=>{e.stopPropagation();if(lvl<=progress){localStorage.setItem("currentLevel",lvl);window.open(link,'_blank');
-    document.getElementById("starBtns").style.display="block";}};
+  b.onclick=(e)=>{e.stopPropagation();if(lvl<=progress){localStorage.setItem("currentLevel",lvl);window.open(link,'_blank');starBtns.style.display="block";}};
   c.appendChild(b);
  });
 }
@@ -107,22 +115,24 @@ function finish(n){
 function resetProgress(){localStorage.clear();location.reload();}
 
 function update(){
- let t=[0,0,0,0,0];
+ let t=[0,0,0,0,0,0];
  for(let i in stars){let v=stars[i],lvl=parseInt(i);
  if(lvl<=15)t[0]+=v;
  else if(lvl<=25)t[1]+=v;
  else if(lvl<=35)t[2]+=v;
  else if(lvl<=45)t[3]+=v;
  else if(lvl<=60)t[4]+=v;
+ else if(lvl<=75)t[5]+=v;
  }
  stars1.innerText="⭐ "+t[0]+"/45";
  stars2.innerText="⭐ "+t[1]+"/30";
  stars3.innerText="⭐ "+t[2]+"/30";
  stars4.innerText="⭐ "+t[3]+"/30";
  stars5.innerText="⭐ "+t[4]+"/45";
+ stars6.innerText="⭐ "+t[5]+"/45";
 
- let locks=[35,70,95,125];
- ["lock2","lock3","lock4","lock5"].forEach((id,i)=>{
+ let locks=[35,70,95,125,170];
+ ["lock2","lock3","lock4","lock5","lock6"].forEach((id,i)=>{
  let need=locks[i]-totalStars();
  let el=document.getElementById(id);
  el.style.display=need>0?"flex":"none";
@@ -135,9 +145,9 @@ create(s2,"s2",15);
 create(s3,"s3",25);
 create(s4,"s4",35);
 create(s5,"s5",45);
+create(s6,"s6",60);
 update();
 </script>
 
 </body>
 </html>
-  
