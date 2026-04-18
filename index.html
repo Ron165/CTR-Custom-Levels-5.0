@@ -2,28 +2,32 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Cut the Rope 6.0 FINAL FIX</title>
+<title>Cut the Rope 7.0</title>
 <style>
-body{font-family:Arial;text-align:center;background:#f2e0c9}
-.box{margin:20px auto;padding:15px;border-radius:15px;width:320px;background:#d9b38c;cursor:pointer;position:relative}
+body{font-family:Arial;text-align:center;background:#f2e0c9;margin:0}
+.box{margin:18px auto;padding:14px;border-radius:16px;width:320px;background:#d9b38c;cursor:pointer;position:relative;transition:transform .2s ease}
+.box:hover{transform:scale(1.03)}
 .grid{display:grid;grid-template-columns:repeat(5,60px);gap:8px;justify-content:center}
-button{padding:8px;border:none;border-radius:8px;cursor:pointer}
+button{padding:8px;border:none;border-radius:10px;cursor:pointer;transition:transform .15s ease}
+button:hover{transform:scale(1.08)}
 .unlocked{background:#3498db;color:#fff}
 .locked{background:#7f8c8d}
 .hidden{display:none}
-.lockOverlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:15px}
-.starBtns{margin:20px auto;background:#fff;padding:10px;border-radius:10px;width:220px}
+.lockOverlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:16px;font-weight:bold}
+.starBtns{margin:20px auto;background:#fff;padding:10px;border-radius:12px;width:240px}
+@media(max-width:600px){.grid{grid-template-columns:repeat(4,60px)}.box{width:92%}}
 </style>
 </head>
 <body>
-<h1>🍬 Cut the Rope 6.0</h1>
+<h1>🍬 Cut the Rope 7.0</h1>
 
 <button onclick="toggleMusic()">🎵 Música</button>
 <button onclick="showCode()">🔓 Código</button>
 <input id="code" placeholder="Escreve código" style="display:none" onkeydown="applyCode(event)">
 
-<audio id="music" loop></audio>
+<audio id="music" loop preload="none"></audio>
 
+<!-- CAIXAS -->
 <div class="box" onclick="toggle('s1')"><h3>📦 Caixa Inicial</h3><div id="l1"></div><div id="s1" class="grid hidden"></div></div>
 <div class="box" onclick="openBox(2)"><h3>✨ Magia</h3><div id="l2" class="lockOverlay"></div><div id="s2" class="grid hidden"></div></div>
 <div class="box" onclick="openBox(3)"><h3>⚠️ Perigos</h3><div id="l3" class="lockOverlay"></div><div id="s3" class="grid hidden"></div></div>
@@ -31,8 +35,10 @@ button{padding:8px;border:none;border-radius:8px;cursor:pointer}
 <div class="box" onclick="openBox(5)"><h3>☠️ Zona de Risco</h3><div id="l5" class="lockOverlay"></div><div id="s5" class="grid hidden"></div></div>
 <div class="box" onclick="openBox(6)"><h3>🎧 Fase Fantasma</h3><div id="l6" class="lockOverlay"></div><div id="s6" class="grid hidden"></div></div>
 <div class="box" onclick="openBox(7)"><h3>🏮 Lanternas</h3><div id="l7" class="lockOverlay"></div><div id="s7" class="grid hidden"></div></div>
+<!-- NOVA CAIXA 8 -->
+<div class="box" onclick="openBox(8)"><h3>🐭 Ratos do Queijo</h3><div id="l8" class="lockOverlay"></div><div id="s8" class="grid hidden"></div></div>
 
-<!-- ⭐ BOTÕES AGORA FIXOS EM BAIXO -->
+<!-- ⭐ BOTÕES -->
 <div class="starBtns" id="starsUI">
 <b>Dar estrelas ao último nível jogado:</b><br>
 <button onclick="finish(1)">⭐</button>
@@ -43,6 +49,7 @@ button{padding:8px;border:none;border-radius:8px;cursor:pointer}
 <button onclick="reset()">🗑️ Reset</button>
 
 <script>
+// LINKS
 const boxes=[
 ["lTDT","NHXI","ePeK","DzSE","yxRy","UxTs","IjFf","mmqQ","tlue","WBjF","hniT","QOLQ","SfsN","Rbkz","dKXr"],
 ["rEgN","aVzu","dzxy","bPDj","Aelr","Tejh","UgbA","dOkj","MGPv","HAJA"],
@@ -50,10 +57,12 @@ const boxes=[
 ["MjBA","oxMQ","KJXf","azSz","LDSu","WUlG","qarR","puVd","OWQI","lQzu"],
 ["LvMb","jfwi","AnPf","uMeP","SztJ","fMSX","wlSF","MOpo","uros","IzjJ","KMuA","ZWwI","SaLm","khhV","jzCD"],
 ["AtWJ","ykvr","WNHq","wPBg","bzXb","lSap","DXIi","eFUq","QLJo","wlBP","nZvA","dpMi","yTjv","izUV","InJY"],
-["RIto","iYNG","rqAJ","pNvp","Qpbz","BjAH","gbuN","MtHw","nlxn","gRVA"]
+["RIto","iYNG","rqAJ","pNvp","Qpbz","BjAH","gbuN","MtHw","nlxn","gRVA"],
+["YPRM","qsNY","WDtF","AyKP","rBPN","FYMV","Wmku","wLQl","AMZK","TvJd"]
 ];
 
-const need=[0,35,70,95,125,170,210];
+// ESTRELAS PARA DESBLOQUEAR (mantém as anteriores e adiciona a 8ª)
+const need=[0,35,70,95,125,170,210,240];
 
 let progress=parseInt(localStorage.getItem("p"))||1;
 let stars=JSON.parse(localStorage.getItem("s"))||{};
@@ -74,10 +83,8 @@ function build(){
   b.forEach((code,j)=>{
     let lvl=levelCounter++;
     let btn=document.createElement("button");
-
     let starsTxt = stars[lvl] ? "⭐".repeat(stars[lvl]) : "";
     btn.innerHTML=(j+1)+"<br>"+starsTxt;
-
     if(lvl<=progress){
       btn.className="unlocked";
       btn.onclick=(e)=>{
@@ -86,7 +93,6 @@ function build(){
         window.open("https://play.candies.monster/"+code,'_blank');
       }
     } else btn.className="locked";
-
     div.appendChild(btn);
   });
  });
@@ -95,13 +101,8 @@ function build(){
 function finish(n){
  let lvl=parseInt(localStorage.getItem("c"));
  if(!lvl)return;
-
- // guarda estrelas corretamente
  stars[lvl]=Math.max(stars[lvl]||0,n);
-
- // AVANÇAR NÍVEL SEMPRE
  if(lvl>=progress) progress=lvl+1;
-
  localStorage.setItem("p",progress);
  localStorage.setItem("s",JSON.stringify(stars));
  alert("⭐ Guardadas!");
@@ -109,7 +110,7 @@ function finish(n){
 }
 
 function updateLocks(){
- for(let i=1;i<=7;i++){
+ for(let i=1;i<=8;i++){
   let needStars=need[i-1]-totalStars();
   let el=document.getElementById('l'+i);
   if(i==1){el.style.display="none";continue;}
@@ -118,11 +119,15 @@ function updateLocks(){
  }
 }
 
+// MÚSICA FUNCIONAL (user gesture)
 function toggleMusic(){
  let m=document.getElementById("music");
- if(!m.src) m.src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b3f3f.mp3";
- if(m.paused) m.play().catch(()=>{});
- else m.pause();
+ if(!m.src){
+  m.src="https://cdn.pixabay.com/download/audio/2021/09/06/audio_8a2c5b2d2b.mp3"; // instrumental estilo jogo
+  m.load();
+ }
+ if(m.paused){ m.play().catch(()=>alert("Clica outra vez para ativar a música")); }
+ else{ m.pause(); }
 }
 
 function showCode(){document.getElementById("code").style.display="inline"}
@@ -130,15 +135,10 @@ function showCode(){document.getElementById("code").style.display="inline"}
 function applyCode(e){
  if(e.key==="Enter" && e.target.value==="Zeptolab"){
   progress=999;
-
-  // DAR 3⭐ A TODOS
-  let totalLevels=0;
-  boxes.forEach(b=> totalLevels+=b.length);
+  let totalLevels=0; boxes.forEach(b=> totalLevels+=b.length);
   for(let i=1;i<=totalLevels;i++){ stars[i]=3; }
-
   localStorage.setItem("p",progress);
   localStorage.setItem("s",JSON.stringify(stars));
-
   alert("Tudo desbloqueado + 3⭐!");
   location.reload();
  }
